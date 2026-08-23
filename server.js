@@ -9,16 +9,21 @@ const client = new OpenAI({
 });
 
 app.post("/solve", async (req, res) => {
-  const question = req.body.question;
+  try {
+    const question = req.body.question;
 
-  const response = await client.responses.create({
-    model: "gpt-5-nano",
-    input: `Answer this riddle with only the answer: ${question}`
-  });
+    const response = await client.responses.create({
+      model: "gpt-5-nano",
+      input: `Answer this riddle with only the answer: ${question}`
+    });
 
-  res.json({
-    answer: response.output_text.trim()
-  });
+    res.json({ answer: response.output_text.trim() });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.listen(3000);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
+});
